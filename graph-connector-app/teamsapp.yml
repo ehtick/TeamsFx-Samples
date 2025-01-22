@@ -1,5 +1,7 @@
-# yaml-language-server: $schema=https://aka.ms/teams-toolkit/v1.2/yaml.schema.json
-version: v1.2
+# yaml-language-server: $schema=https://aka.ms/teams-toolkit/v1.8/yaml.schema.json
+# Visit https://aka.ms/teamsfx-v5.0-guide for details on this file
+# Visit https://aka.ms/teamsfx-actions for details on actions
+version: v1.8
 
 additionalMetadata:
   sampleTag: TeamsFx-Samples:graph-connector-app
@@ -40,11 +42,13 @@ provision:
           deploymentName: Create-resources-for-tab # Required when deploy ARM template
       bicepCliVersion: v0.9.1 # Teams Toolkit will download this bicep CLI version from github for you, will use bicep CLI in PATH if you remove this config.
 
-  - uses: azureStorage/enableStaticWebsite
+  # Get the deployment token from Azure Static Web Apps
+  - uses: azureStaticWebApps/getDeploymentToken
     with:
-      storageResourceId: ${{TAB_AZURE_STORAGE_RESOURCE_ID}}
-      indexPage: index.html
-      errorPage: error.html
+      resourceId: ${{AZURE_STATIC_WEB_APPS_RESOURCE_ID}}
+    # Save deployment token to the environment file for the deployment action
+    writeToEnvironmentFile:
+      deploymentToken: SECRET_TAB_SWA_DEPLOYMENT_TOKEN
 
   - uses: aadApp/update # Apply the AAD manifest to an existing AAD app. Will use the object id in manifest file to determine which AAD app to update.
     with:
@@ -62,7 +66,7 @@ provision:
       # Path to manifest template
       manifestPath: ./appPackage/manifest.json
       outputZipPath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
-      outputJsonPath: ./appPackage/build/manifest.${{TEAMSFX_ENV}}.json
+      outputFolder: ./appPackage/build
   # Apply the Teams app manifest to an existing Teams app in
   # Teams Developer Portal.
   # Will use the app id in manifest file to determine which Teams app to update.
@@ -71,14 +75,6 @@ provision:
       appPackagePath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip # Relative path to teamsfx folder. This is the path for built zip file.
 
 deploy:
-  # Install development tool(s)
-  - uses: devTool/install
-    with:
-      dotnet: true
-    # Write the information of installed development tool(s) into environment
-    # file for the specified environment variable(s).
-    writeToEnvironmentFile:
-      dotnetPath: DOTNET_PATH
   # Run npm command
   - uses: cli/runNpmCommand
     with:
@@ -94,14 +90,12 @@ deploy:
     with:
       workingDirectory: tabs
       args: run build --if-present
-  # Deploy bits to Azure Storage Static Website
-  - uses: azureStorage/deploy
+  # Deploy bits to Azure Static Web Apps
+  - uses: cli/runNpxCommand
+    name: deploy to Azure Static Web Apps
     with:
-      workingDirectory: tabs
-      # Deploy base folder. This folder includes manifest files for AAD app and Teams app that should be ignored using the ignoreFile.
-      artifactFolder: build
-      # The resource id of the cloud resource to be deployed to
-      resourceId: ${{TAB_AZURE_STORAGE_RESOURCE_ID}}
+      args: '@azure/static-web-apps-cli deploy ./tabs/build -d
+        ${{SECRET_TAB_SWA_DEPLOYMENT_TOKEN}} --env production'
   # Run npm command
   - uses: cli/runNpmCommand
     with:
@@ -112,11 +106,6 @@ deploy:
     with:
       workingDirectory: api
       args: run build --if-present
-  - uses: cli/runDotnetCommand
-    with:
-      workingDirectory: api
-      args: build extensions.csproj -o bin --ignore-failed-sources
-      execPath: ${{DOTNET_PATH}}
   # Deploy your application to Azure Functions using the zip deploy feature.
   # For additional details, see at https://aka.ms/zip-deploy-to-azure-functions
   - uses: azureFunctions/zipDeploy
@@ -134,12 +123,13 @@ publish:
     with:
       # Path to manifest template
       manifestPath: ./appPackage/manifest.json
+  # Build Teams app package with latest env value
   - uses: teamsApp/zipAppPackage
     with:
       # Path to manifest template
       manifestPath: ./appPackage/manifest.json
       outputZipPath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
-      outputJsonPath: ./appPackage/build/manifest.${{TEAMSFX_ENV}}.json
+      outputFolder: ./appPackage/build
   # Publish the app to
   # Teams Admin Center (https://admin.teams.microsoft.com/policies/manage-apps)
   # for review and approval

@@ -3,13 +3,6 @@
 @description('Used to generate names for all resources in this file')
 param resourceBaseName string
 
-@description('Required when create Azure Bot service')
-param botAadAppClientId string
-
-@secure()
-@description('Required by Bot Framework package in your bot project')
-param botAadAppClientSecret string
-
 param functionAppSKU string
 param functionAppSKUTier string
 param storageSKU string
@@ -24,7 +17,78 @@ param functionAppName string = resourceBaseName
 param location string = resourceGroup().location
 param storageName string = resourceBaseName
 param serviceBusNamespaceName string = resourceBaseName
+param identityName string = resourceBaseName
 
+resource identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  location: location
+  name: identityName
+}
+
+// https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
+var StorageBlobDataOwner = 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
+var StorageQueueDataContributor = '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
+var StorageTableDataContributor = '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'
+var AzureServiceBusDataOwner = '090c5cfd-751d-490a-894a-3ce6f1109419'
+
+resource storageBlobRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('${resourceBaseName}-${uniqueString('StorageBlobRoleAssignment')}')
+  scope: storage
+  properties: {
+    principalId: functionApp.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', StorageBlobDataOwner)
+  }
+}
+
+resource storageQueueRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('${resourceBaseName}-${uniqueString('StorageQueueRoleAssignment')}')
+  scope: storage
+  properties: {
+    principalId: functionApp.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', StorageQueueDataContributor)
+  }
+}
+
+resource storageTableRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('${resourceBaseName}-${uniqueString('StorageTableRoleAssignment')}')
+  scope: storage
+  properties: {
+    principalId: functionApp.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', StorageTableDataContributor)
+  }
+}
+
+resource storageTableUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('${resourceBaseName}-${uniqueString('StorageTableUserRoleAssignment')}')
+  scope: storage
+  properties: {
+    principalId: identity.properties.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', StorageTableDataContributor)
+  }
+}
+
+resource azureServiceBusRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('${resourceBaseName}-${uniqueString('AzureServiceBusRoleAssignment')}')
+  scope: serviceBusNamespace
+  properties: {
+    principalId: functionApp.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', AzureServiceBusDataOwner)
+  }
+}
+
+resource azureServiceBusUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('${resourceBaseName}-${uniqueString('AzureServiceBusUserRoleAssignment')}')
+  scope: serviceBusNamespace
+  properties: {
+    principalId: identity.properties.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', AzureServiceBusDataOwner)
+  }
+}
 
 // Compute resources for your Web App
 resource serverfarm 'Microsoft.Web/serverfarms@2021-02-01' = {
@@ -44,6 +108,9 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-06-01' = {
   location: location
   sku: {
     name: storageSKU // You can follow https://aka.ms/teamsfx-bicep-add-param-tutorial to add functionStorageSku property to provisionParameters to override the default value "Standard_LRS".
+  }
+  properties: {
+    allowSharedKeyAccess: false // Disable Shared Key Access
   }
 }
 
@@ -69,7 +136,9 @@ resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2022-01-01-preview
   sku: {
     name: 'Standard'
   }
-  properties: {}
+  properties: {
+    disableLocalAuth: true
+  }
 }
 
 // Service Bus queue for message sending
@@ -103,12 +172,12 @@ resource functionApp 'Microsoft.Web/sites@2021-02-01' = {
       alwaysOn: false
       appSettings: [
         {
-          name: 'AzureWebJobsDashboard'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${listKeys(storage.id, storage.apiVersion).keys[0].value};EndpointSuffix=${environment().suffixes.storage}' // Azure Functions internal setting
+          name: 'AzureWebJobsStorage__accountName'
+          value: storageName
         }
         {
-          name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${listKeys(storage.id, storage.apiVersion).keys[0].value};EndpointSuffix=${environment().suffixes.storage}' // Azure Functions internal setting
+          name: 'ServiceBusConnection__fullyQualifiedNamespace'
+          value: '${serviceBusNamespaceName}.servicebus.windows.net'
         }
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
@@ -117,10 +186,6 @@ resource functionApp 'Microsoft.Web/sites@2021-02-01' = {
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: 'node' // Set runtime to NodeJS
-        }
-        {
-          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${listKeys(storage.id, storage.apiVersion).keys[0].value};EndpointSuffix=${environment().suffixes.storage}' // Azure Functions internal setting
         }
         {
           name: 'WEBSITE_RUN_FROM_PACKAGE'
@@ -132,15 +197,19 @@ resource functionApp 'Microsoft.Web/sites@2021-02-01' = {
         }
         {
           name: 'BOT_ID'
-          value: botAadAppClientId
+          value: identity.properties.clientId
         }
         {
-          name: 'BOT_PASSWORD'
-          value: botAadAppClientSecret
+          name: 'BOT_TENANT_ID'
+          value: identity.properties.tenantId
         }
         {
-          name: 'SERVICE_BUS_CONNECTION_STRING'
-          value: 'Endpoint=sb://${serviceBusNamespaceName}.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=${listKeys('${serviceBusNamespace.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBusNamespace.apiVersion).primaryKey}'
+          name: 'BOT_TYPE'
+          value: 'UserAssignedMsi'
+        }
+        {
+          name: 'SERVICE_BUS_NAMESPACE'
+          value: serviceBusNamespaceName
         }
         {
           name: 'SERVICE_BUS_QUEUE_NAME'
@@ -159,14 +228,6 @@ resource functionApp 'Microsoft.Web/sites@2021-02-01' = {
           value: storage.name
         }
         {
-          name: 'STORAGE_ACCOUNT_URL'
-          value: 'https://${storage.name}.table.core.windows.net'
-        }
-        {
-          name: 'STORAGE_ACCOUNT_KEY'
-          value: listKeys(storage.id, storage.apiVersion).keys[0].value
-        }
-        {
           name: 'RUNNING_ON_AZURE'
           value: '1'
         }
@@ -174,8 +235,18 @@ resource functionApp 'Microsoft.Web/sites@2021-02-01' = {
           name: 'SCM_ZIPDEPLOY_DONOT_PRESERVE_FILETIME'
           value: '1' // Zipdeploy files will always be updated. Detail: https://aka.ms/teamsfx-zipdeploy-donot-preserve-filetime
         }
+        {
+          name: 'MANAGED_IDENTITY_ID'
+          value: identity.properties.clientId
+        }
       ]
       ftpsState: 'FtpsOnly'
+    }
+  }
+  identity: {
+    type: 'SystemAssigned, UserAssigned'
+    userAssignedIdentities: {
+      '${identity.id}': {}
     }
   }
 }
@@ -185,7 +256,9 @@ module azureBotRegistration './botRegistration/azurebot.bicep' = {
   name: 'Azure-Bot-registration'
   params: {
     resourceBaseName: resourceBaseName
-    botAadAppClientId: botAadAppClientId
+    identityClientId: identity.properties.clientId
+    identityResourceId: identity.id
+    identityTenantId: identity.properties.tenantId
     botAppDomain: functionApp.properties.defaultHostName
     botDisplayName: botDisplayName
   }
@@ -194,11 +267,11 @@ module azureBotRegistration './botRegistration/azurebot.bicep' = {
 output BOT_DOMAIN string = functionApp.properties.defaultHostName
 output BOT_AZURE_FUNCTION_APP_RESOURCE_ID string = functionApp.id
 output BOT_FUNCTION_ENDPOINT string = 'https://${functionApp.properties.defaultHostName}'
-output SERVICE_BUS_ENDPOINT string = 'Endpoint=sb://${serviceBusNamespaceName}.servicebus.windows.net/'
-output SECRET_SERVICE_BUS_ACCESS_KEY string = listKeys('${serviceBusNamespace.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBusNamespace.apiVersion).primaryKey
+output SERVICE_BUS_NAMESPACE string = serviceBusNamespaceName
 output SERVICE_BUS_QUEUE_NAME string = serviceBusQueue.name
 output STORAGE_ACCOUNT_NAME string = storage.name
-output STORAGE_ACCOUNT_URL string = 'https://${storage.name}.table.core.windows.net'
-output SECRET_STORAGE_ACCOUNT_KEY string = listKeys(storage.id, storage.apiVersion).keys[0].value
 output INSTALLATION_TABLE_NAME string = storageTableName
 output INSTALLATION_MOCK_TABLE_NAME string = '${storageTableName}mock'
+output MANAGED_IDENTITY_ID string = identity.properties.clientId
+output BOT_ID string = identity.properties.clientId
+output BOT_TENANT_ID string = identity.properties.tenantId

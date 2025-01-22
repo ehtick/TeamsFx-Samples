@@ -1,10 +1,23 @@
+---
+page_type: sample
+languages:
+- typescript
+products:
+- office-teams
+- office
+name: Team Central Dashboard
+urlFragment: officedev-teamsfx-samples-tab-team-central-dashboard
+description: A single dashboard displaying data chats and content from Microsoft Graph to accelerate team collaboration and personal productivity.
+extensions:
+  createdDate: "2022-09-20"
+---
 # Getting Started with Team Central Dashboard
 
 Microsoft Teams supports the ability to run web-based UI inside "custom tabs" that users can install either for just themselves (personal tabs) or within a team or group chat context.
 
 Team Central Dashboard shows you how to build a tab with data chats and content from Microsoft Graph to accelerate team collaboration and personal productivity.
 
-![team-central-dashboard](images/team-central-dashboard.gif)
+![team-central-dashboard](assets/sampleDemo.gif)
 
 > Note: This sample will only provision [single tenant](https://learn.microsoft.com/azure/active-directory/develop/single-and-multi-tenant-apps#who-can-sign-in-to-your-app) Azure Active Directory app. For multi-tenant support, please refer to this [wiki](https://aka.ms/teamsfx-multi-tenant).
 
@@ -19,11 +32,11 @@ Team Central Dashboard shows you how to build a tab with data chats and content 
 
 - [Node.js](https://nodejs.org/), supported versions: 16, 18
 - A Microsoft 365 tenant in which you have permission to upload Teams apps. You can get a free Microsoft 365 developer tenant by joining the [M365 developer program](https://developer.microsoft.com/en-us/microsoft-365/dev-program)
-- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [TeamsFx CLI](https://aka.ms/teamsfx-cli)
+- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [Teams Toolkit CLI](https://aka.ms/teams-toolkit-cli)
 
 ## Minimal path to awesome
 
-> Here are the instructions to run the sample in **Visual Studio Code**. You can also try to run the app using TeamsFx CLI tool, refer to [Try the Sample with TeamsFx CLI](cli.md)
+> Here are the instructions to run the sample in **Visual Studio Code**. You can also try to run the app using Teams Toolkit CLI tool, refer to [Try the Sample with Teams Toolkit CLI](cli.md)
 
 ### Run the app locally
 
@@ -99,8 +112,9 @@ In mobile devices, the feature of open in Teams may not work.
 
 | Date         | Author     | Comments                               |
 | ------------ | ---------- | -------------------------------------- |
-| Feb 22, 2023 | Hui, Frank | onboard                                |
-| Mar 31, 2023 | Hui        | update to support Teams Toolkit V5.0.0 |
+| Feb 22, 2023 | Hui, Frank | Onboard                                |
+| Mar 31, 2023 | Hui        | Update to support Teams Toolkit V5.0.0 |
+| Feb 27, 2024 | Hui        | Upgrade Azure Function V4              |
 
 ## Feedback
 

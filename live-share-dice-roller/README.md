@@ -1,3 +1,16 @@
+---
+page_type: sample
+languages:
+- typescript
+products:
+- office-teams
+- office
+name: Dice Roller in meeting
+urlFragment: officedev-teamsfx-samples-tab-live-share-dice-roller
+description: This sample introduces Microsoft Live Share and Azure Fluid Relay to enable a shared experience between multiple users.
+extensions:
+  createdDate: "2023-04-27"
+---
 # Dice Roller - Live Share sample
 
 This repository contains a simple app that enables all connected clients to roll a dice and view the result. For a
@@ -7,7 +20,7 @@ walkthrough of this example and how it works, check out the [tutorial documentat
 
 - [Node.js](https://nodejs.org/), supported versions: 16, 18
 - An M365 account. If you do not have M365 account, apply one from [M365 developer program](https://developer.microsoft.com/en-us/microsoft-365/dev-program)
-- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [TeamsFx CLI](https://aka.ms/teamsfx-cli)
+- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [Teams Toolkit CLI](https://aka.ms/teams-toolkit-cli)
 
 ## Run the app locally
 
@@ -32,7 +45,7 @@ Deploy your project to Azure by following these steps:
 
 > Note: Provision Azure cloud resources and deploy to Azure may cause charges to your Azure Subscription.
 
-## Preview the app in Teams client
+## Launch the app in Teams client
 
 After you have completed the provision and deploy steps in `Deploy the app to Azure` section, you can preview your app in Teams client by following steps below:
 

@@ -1,5 +1,5 @@
-# yaml-language-server: $schema=https://aka.ms/teams-toolkit/v1.2/yaml.schema.json
-version: v1.2
+# yaml-language-server: $schema=https://aka.ms/teams-toolkit/v1.5/yaml.schema.json
+version: v1.5
 
 additionalMetadata:
   sampleTag: TeamsFx-Samples:hello-world-tab-with-backend
@@ -12,7 +12,8 @@ provision:
       name: hello-world-tab-with-backend-aad # Note: when you run aadApp/update, the AAD app name will be updated based on the definition in manifest. If you don't want to change the name, make sure the name in AAD manifest is the same with the name defined here.
       generateClientSecret: true # If the value is false, the action will not generate client secret for you
       signInAudience: "AzureADMyOrg" # Authenticate users with a Microsoft work or school account in your organization's Azure AD tenant (for example, single tenant).
-    writeToEnvironmentFile: # Write the information of created resources into environment file for the specified environment variable(s).
+    writeToEnvironmentFile:
+      # Write the information of created resources into environment file for the specified environment variable(s).
       clientId: AAD_APP_CLIENT_ID
       clientSecret: SECRET_AAD_APP_CLIENT_SECRET # Environment variable that starts with `SECRET_` will be stored to the .env.{envName}.user environment file
       objectId: AAD_APP_OBJECT_ID
@@ -40,11 +41,13 @@ provision:
           deploymentName: Create-resources-for-tab # Required when deploy ARM template
       bicepCliVersion: v0.9.1 # Teams Toolkit will download this bicep CLI version from github for you, will use bicep CLI in PATH if you remove this config.
 
-  - uses: azureStorage/enableStaticWebsite
+  # Get the deployment token from Azure Static Web Apps
+  - uses: azureStaticWebApps/getDeploymentToken
     with:
-      storageResourceId: ${{TAB_AZURE_STORAGE_RESOURCE_ID}}
-      indexPage: index.html
-      errorPage: error.html
+      resourceId: ${{AZURE_STATIC_WEB_APPS_RESOURCE_ID}}
+    # Save deployment token to the environment file for the deployment action
+    writeToEnvironmentFile:
+      deploymentToken: SECRET_TAB_SWA_DEPLOYMENT_TOKEN
 
   - uses: aadApp/update # Apply the AAD manifest to an existing AAD app. Will use the object id in manifest file to determine which AAD app to update.
     with:
@@ -84,13 +87,12 @@ deploy:
       REACT_APP_FUNC_ENDPOINT: ${{API_FUNCTION_ENDPOINT}}
     with:
       args: run build --if-present
-  # Deploy bits to Azure Storage Static Website
-  - uses: azureStorage/deploy
+  # Deploy bits to Azure Static Web Apps
+  - uses: cli/runNpxCommand
+    name: deploy to Azure Static Web Apps
     with:
-      # Deploy base folder. This folder includes manifest files for AAD app and Teams app that should be ignored using the ignoreFile.
-      artifactFolder: build
-      # The resource id of the cloud resource to be deployed to
-      resourceId: ${{TAB_AZURE_STORAGE_RESOURCE_ID}}
+      args: '@azure/static-web-apps-cli deploy ./build -d
+        ${{SECRET_TAB_SWA_DEPLOYMENT_TOKEN}} --env production'
   # Run npm command
   - uses: cli/runNpmCommand
     with:
@@ -101,19 +103,6 @@ deploy:
     with:
       workingDirectory: api
       args: run build --if-present
-  # Install development tool(s)
-  - uses: devTool/install
-    with:
-      dotnet: true
-    # Write the information of installed development tool(s) into environment
-    # file for the specified environment variable(s).
-    writeToEnvironmentFile:
-      dotnetPath: DOTNET_PATH
-  - uses: cli/runDotnetCommand
-    with:
-      workingDirectory: api
-      args: build extensions.csproj -o bin --ignore-failed-sources
-      execPath: ${{DOTNET_PATH}}
   # Deploy your application to Azure Functions using the zip deploy feature.
   # For additional details, see at https://aka.ms/zip-deploy-to-azure-functions
   - uses: azureFunctions/zipDeploy

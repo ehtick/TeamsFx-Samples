@@ -1,3 +1,16 @@
+---
+page_type: sample
+languages:
+- typescript
+products:
+- office-teams
+- office
+name: SSO Enabled Tab via APIM Proxy
+urlFragment: officedev-teamsfx-samples-tab-sso-enabled-tab-via-apim-proxy
+description: An SSO-enabled Microsoft Teams Tab app using APIM as a proxy.
+extensions:
+  createdDate: "2023-09-15"
+---
 # Getting Started with SSO Enabled Tab via APIM Proxy Sample (Azure)
 
 Microsoft Teams supports the ability to run web-based UI inside "custom tabs" that users can install either for just themselves (personal tabs) or within a team or group chat context.
@@ -28,7 +41,7 @@ With this sample, you can achieve the SSO feature in your tab app using OBO (on-
 - An M365 account. If you do not have M365 account, apply one from [M365 developer program](https://developer.microsoft.com/microsoft-365/dev-program)
 - [Set up your dev environment for extending Teams apps across Microsoft 365](https://aka.ms/teamsfx-m365-apps-prerequisites)
 > Please note that after you enrolled your developer tenant in Office 365 Target Release, it may take couple days for the enrollment to take effect.
-- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [TeamsFx CLI](https://aka.ms/teamsfx-cli)
+- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [Teams Toolkit CLI](https://aka.ms/teams-toolkit-cli)
 
 ## Getting Started
 

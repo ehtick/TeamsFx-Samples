@@ -14,14 +14,11 @@ import { useTeamsUserCredential } from "@microsoft/teamsfx-react";
 
 import MyDashboard from "./dashboards/MyDashboard";
 import { TeamsFxContext } from "./internal/context";
-import Privacy from "./Privacy";
-import TabConfig from "./TabConfig";
-import TermsOfUse from "./TermsOfUse";
 
 export default function App() {
   const { loading, themeString } = useTeamsUserCredential({
-    initiateLoginEndpoint: process.env.REACT_APP_START_LOGIN_PAGE_URL!,
-    clientId: process.env.REACT_APP_CLIENT_ID!,
+    initiateLoginEndpoint: import.meta.env.VITE_APP_START_LOGIN_PAGE_URL!,
+    clientId: import.meta.env.VITE_APP_CLIENT_ID!,
   });
   useEffect(() => {
     loading &&
@@ -45,10 +42,7 @@ export default function App() {
         {!loading && (
           <Router>
             <Routes>
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/termsofuse" element={<TermsOfUse />} />
               <Route path="/tab" element={<MyDashboard />} />
-              <Route path="/config" element={<TabConfig />} />
               <Route path="*" element={<Navigate to={"/tab"} />} />
             </Routes>
           </Router>

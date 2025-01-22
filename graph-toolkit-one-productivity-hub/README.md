@@ -1,3 +1,16 @@
+---
+page_type: sample
+languages:
+- typescript
+products:
+- office-teams
+- office
+name: One Productivity Hub using Graph Toolkit
+urlFragment: officedev-teamsfx-samples-tab-graph-toolkit-one-productivity-hub
+description: Microsoft Teams tab with SSO to view calendar events, to-do tasks and file folders.
+extensions:
+  createdDate: "2022-07-27"
+---
 # Getting Started with One Productivity Hub
 
 One Productivity Hub sample shows you how to build a tab for viewing your calendar events, to-do tasks and files by using [Microsoft Graph Toolkit](https://docs.microsoft.com/en-us/graph/toolkit/overview) components and [TeamsFx Provider](https://www.npmjs.com/package/@microsoft/mgt-teamsfx-provider).
@@ -15,7 +28,7 @@ One Productivity Hub sample shows you how to build a tab for viewing your calend
 
 - [Node.js](https://nodejs.org/) version 16, 18
 - A Microsoft 365 tenant in which you have permission to upload Teams apps. You can get a free Microsoft 365 developer tenant by joining the [Microsoft 365 developer program](https://developer.microsoft.com/en-us/microsoft-365/dev-program).
-- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [TeamsFx CLI](https://aka.ms/teamsfx-cli)
+- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [Teams Toolkit CLI](https://aka.ms/teams-toolkit-cli)
 
 ## Minimal path to awesome
 
@@ -25,13 +38,13 @@ One Productivity Hub sample shows you how to build a tab for viewing your calend
 
   1. Clone the repo to your local workspace or directly download the source code.
   1. Open the project in Visual Studio Code.
-  1. Open Debug View (`Ctrl+Shift+D`) and select "Debug (Edge)" or "Debug (Chrome)" in dropdown list.
+  1. Open Debug View (`Ctrl+Shift+D`) and select "Debug in Teams (Edge)" or "Debug in Teams (Chrome)" in dropdown list.
   1. Press "F5" to open a browser window and then select your package to view contact exporter sample app.
 
-- From TeamsFx CLI
-  1. Run command: `teamsfx provision --env local` .
-  1. Run command: `teamsfx deploy --env local` .
-  1. Run command: `teamsfx preview --env local` .
+- From Teams Toolkit CLI
+  1. Run command: `teamsapp provision --env local` .
+  1. Run command: `teamsapp deploy --env local` .
+  1. Run command: `teamsapp preview --env local` .
 
 ### Deploy the app to Azure
 
@@ -43,17 +56,17 @@ One Productivity Hub sample shows you how to build a tab for viewing your calend
   1. Click `Provision` from `LIFECYCLE` section or open the command palette and select: `Teams: Provision`.
   1. Click `Deploy` or open the command palette and select: `Teams: Deploy`.
 
-- From TeamsFx CLI
-  1. Run command: `teamsfx account login azure`.
-  1. Run command: `teamsfx provision --env dev`.
-  1. Run command: `teamsfx deploy --env dev`.
+- From Teams Toolkit CLI
+  1. Run command: `teamsapp auth login azure`.
+  1. Run command: `teamsapp provision --env dev`.
+  1. Run command: `teamsapp deploy --env dev`.
 
 ### Preview the app in Teams
 
 - From VSCode:
   1. Once deployment is completed, you can preview the APP running in Azure. In Visual Studio Code, open `Run and Debug` and select `Launch Remote (Edge)` or `Launch Remote (Chrome)` in the dropdown list and Press `F5` or green arrow button to open a browser.
-- From TeamsFx CLI:
-  1. Run command: `teamsfx preview --env dev`.
+- From Teams Toolkit CLI:
+  1. Run command: `teamsapp preview --env dev`.
 
 ## Advanced usage of this sample
 

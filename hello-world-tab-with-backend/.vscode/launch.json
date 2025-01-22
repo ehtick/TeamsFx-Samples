@@ -62,11 +62,28 @@
                 "hidden": true
             },
             "internalConsoleOptions": "neverOpen"
-        }
+        },
+        {
+            "name": "Attach to Frontend with proxy (Edge)",
+            "type": "msedge",
+            "request": "launch",
+            "url": "https://teams.microsoft.com/l/app/${{local:TEAMS_APP_ID}}?installAppPackage=true&webjoin=true&${account-hint}",
+            "cascadeTerminateToConfigurations": [
+                "Attach to Backend"
+            ],
+            "presentation": {
+                "group": "all",
+                "hidden": true
+            },
+            "runtimeArgs": [
+                "--proxy-server=https=127.0.0.1:54000",
+            ],
+            "internalConsoleOptions": "neverOpen"
+        },
     ],
     "compounds": [
         {
-            "name": "Debug (Edge)",
+            "name": "Debug in Teams (Edge)",
             "configurations": [
                 "Attach to Frontend (Edge)",
                 "Attach to Backend"
@@ -79,7 +96,7 @@
             "stopAll": true
         },
         {
-            "name": "Debug (Chrome)",
+            "name": "Debug in Teams (Chrome)",
             "configurations": [
                 "Attach to Frontend (Chrome)",
                 "Attach to Backend"
@@ -90,6 +107,19 @@
                 "order": 2
             },
             "stopAll": true
-        }
+        },
+        {
+            "name": "Debug in Teams with proxy (Edge)",
+            "configurations": [
+                "Attach to Frontend with proxy (Edge)",
+                "Attach to Backend"
+            ],
+            "preLaunchTask": "Start Teams App Locally with proxy",
+            "presentation": {
+                "group": "proxy",
+                "order": 1
+            },
+            "stopAll": true
+        },
     ]
 }

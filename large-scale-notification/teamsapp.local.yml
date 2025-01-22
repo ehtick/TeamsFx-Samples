@@ -11,22 +11,22 @@ provision:
   - uses: teamsApp/create
     with:
       # Teams app name
-      name: large-scale-notifi-${{TEAMSFX_ENV}}
+      name: large-scale-notifi${{APP_NAME_SUFFIX}}
     # Write the information of created resources into environment file for
     # the specified environment variable(s).
-    writeToEnvironmentFile: 
+    writeToEnvironmentFile:
       teamsAppId: TEAMS_APP_ID
 
   # Create or reuse an existing Azure Active Directory application for bot.
   - uses: botAadApp/create
     with:
       # The Azure Active Directory application's display name
-      name: large-scale-notifi-${{TEAMSFX_ENV}}
+      name: large-scale-notifi${{APP_NAME_SUFFIX}}
     writeToEnvironmentFile:
       # The Azure Active Directory application's client id created for bot.
       botId: BOT_ID
       # The Azure Active Directory application's client secret created for bot.
-      botPassword: SECRET_BOT_PASSWORD 
+      botPassword: SECRET_BOT_PASSWORD
 
   # Create or update the bot registration on dev.botframework.com
   - uses: botFramework/create
@@ -81,31 +81,3 @@ deploy:
   - uses: cli/runNpmCommand
     with:
       args: install --no-audit
-
-  - uses: file/createOrUpdateEnvironmentFile
-    with: 
-      target: ./env/.env.${{TEAMSFX_ENV}}
-      envs: 
-        STORAGE_ACCOUNT_NAME: devstoreaccount1
-        STORAGE_ACCOUNT_URL: http://127.0.0.1:10002/devstoreaccount1
-        INSTALLATION_TABLE_NAME: localtable
-
-  - uses: file/createOrUpdateEnvironmentFile
-    with: 
-      target: ./env/.env.${{TEAMSFX_ENV}}.user
-      envs: 
-        SECRET_STORAGE_ACCOUNT_KEY: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
-        
-
-  # Generate runtime environment variables
-  - uses: file/createOrUpdateEnvironmentFile
-    with:
-      target: ./.localConfigs
-      envs:
-        BOT_ID: ${{BOT_ID}}
-        BOT_PASSWORD: ${{SECRET_BOT_PASSWORD}}
-        SERVICE_BUS_QUEUE_NAME: ${{SERVICE_BUS_QUEUE_NAME}}
-        STORAGE_ACCOUNT_NAME: devstoreaccount1
-        STORAGE_ACCOUNT_URL: http://127.0.0.1:10002/devstoreaccount1
-        INSTALLATION_TABLE_NAME: localtable
-        STORAGE_ACCOUNT_KEY: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==

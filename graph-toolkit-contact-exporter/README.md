@@ -1,3 +1,16 @@
+---
+page_type: sample
+languages:
+- typescript
+products:
+- office-teams
+- office
+name: Contact Exporter using Graph Toolkit
+urlFragment: officedev-teamsfx-samples-tab-graph-toolkit-contact-exporter
+description: Contact Exporter app of Microsoft Teams Tab app.
+extensions:
+  createdDate: "2021-11-30"
+---
 # Getting Started with Graph Toolkit Contact Exporter
 
 Graph Toolkit Contact Exporter sample APP provides an easy way to export your teams contact info to Excel file. This APP is using [Microsoft Graph Toolkit](https://docs.microsoft.com/en-us/graph/toolkit/overview) as UI component.
@@ -15,7 +28,7 @@ Graph Toolkit Contact Exporter sample APP provides an easy way to export your te
 
 - [Node.js](https://nodejs.org/) version 16, 18
 - A Microsoft 365 tenant in which you have permission to upload Teams apps. You can get a free Microsoft 365 developer tenant by joining the [Microsoft 365 developer program](https://developer.microsoft.com/en-us/microsoft-365/dev-program).
-- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [TeamsFx CLI](https://aka.ms/teamsfx-cli)
+- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [Teams Toolkit CLI](https://aka.ms/teams-toolkit-cli)
 
 ## Minimal path to awesome
 
@@ -25,13 +38,13 @@ Graph Toolkit Contact Exporter sample APP provides an easy way to export your te
 
   1. Clone the repo to your local workspace or directly download the source code.
   1. Open the project in Visual Studio Code.
-  1. Open Debug View (`Ctrl+Shift+D`) and select "Debug (Edge)" or "Debug (Chrome)" in dropdown list.
+  1. Open Debug View (`Ctrl+Shift+D`) and select "Debug in Teams (Edge)" or "Debug in Teams (Chrome)" in dropdown list.
   1. Press "F5" to open a browser window and then select your package to view contact exporter sample app.
 
-- From TeamsFx CLI
-  1. Run command: `teamsfx provision --env local` .
-  1. Run command: `teamsfx deploy --env local` .
-  1. Run command: `teamsfx preview --env local` .
+- From Teams Toolkit CLI
+  1. Run command: `teamsapp provision --env local` .
+  1. Run command: `teamsapp deploy --env local` .
+  1. Run command: `teamsapp preview --env local` .
 
 ### Deploy the app to Azure
 
@@ -43,17 +56,23 @@ Graph Toolkit Contact Exporter sample APP provides an easy way to export your te
   1. Click `Provision` from `LIFECYCLE` section or open the command palette and select: `Teams: Provision`.
   1. Click `Deploy` or open the command palette and select: `Teams: Deploy`.
 
-- From TeamsFx CLI
-  1. Run command: `teamsfx account login azure`.
-  1. Run command: `teamsfx provision --env dev`.
-  1. Run command: `teamsfx deploy --env dev`.
+- From Teams Toolkit CLI
+  1. Run command: `teamsapp auth login azure`.
+  1. Run command: `teamsapp provision --env dev`.
+  1. Run command: `teamsapp deploy --env dev`.
 
 ### Preview the app in Teams
 
 - From VSCode:
   1. Once deployment is completed, you can preview the APP running in Azure. In Visual Studio Code, open `Run and Debug` and select `Launch Remote (Edge)` or `Launch Remote (Chrome)` in the dropdown list and Press `F5` or green arrow button to open a browser.
-- From TeamsFx CLI:
-  1. Run command: `teamsfx preview --env dev`.
+- From Teams Toolkit CLI:
+  1. Run command: `teamsapp preview --env dev`.
+
+### Run the app locally with proxy
+In some scenarios, it is helpful to skip the login and authentication flow and then provide mocked Graph API responses for development and test purpose. This sample provides a new way to debug it with proxy for mocking Graph API responses. You can customize the desired Graph API responses.
+1. Refer to [Get started with Dev Proxy](https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/get-started?tabs=powershell&pivots=client-operating-system-windows) to install devproxy first.
+1. Open the project with VS Code, open the `Run and Debug Activity` Panel and select `Debug in Teams with proxy (Edge)`. 
+1. Please refer to [Proxy Mode](proxy/README.md) for more information.
 
 ## Advanced usage of this sample
 

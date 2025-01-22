@@ -1,3 +1,16 @@
+---
+page_type: sample
+languages:
+- typescript
+products:
+- office-teams
+- office
+name: Graph Connector App
+urlFragment: officedev-teamsfx-samples-tab-graph-connector-app
+description: This sample app showcases how to build custom Graph Connector with Azure Functions and query data using Microsoft Graph Client and TeamsFx SDK.
+extensions:
+  createdDate: "2022-04-18"
+---
 # Getting Started with Graph Connector App
 
 This sample app showcases how to build custom Graph Connector with Azure Functions and query data using Microsoft Graph Client and TeamsFx SDK.
@@ -15,14 +28,14 @@ This sample app showcases how to build custom Graph Connector with Azure Functio
 - [Node.js](https://nodejs.org/), supported versions: 16, 18
 - An [Azure subscription](https://azure.microsoft.com/en-us/free/)
 - A Microsoft 365 account. If you do not have Microsoft 365 account, apply one from [Microsoft 365 developer program](https://developer.microsoft.com/en-us/microsoft-365/dev-program)
-- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [TeamsFx CLI](https://aka.ms/teamsfx-cli)
+- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [Teams Toolkit CLI](https://aka.ms/teams-toolkit-cli)
 
 ## Minimal path to awesome
 
 ### Run the app locally
 1. Clone the repo to your local workspace or directly download the source code.
 1. Open the project in Visual Studio Code.
-1. Open Debug View (`Ctrl+Shift+D`) and select "Debug (Edge)" or "Debug (Chrome)" in dropdown list.
+1. Open Debug View (`Ctrl+Shift+D`) and select "Debug in Teams (Edge)" or "Debug in Teams (Chrome)" in dropdown list.
 1. Press "F5" to open a browser window and then select your package to view contact exporter sample app.
 
 ### Deploy the app to Azure
@@ -30,7 +43,7 @@ This sample app showcases how to build custom Graph Connector with Azure Functio
 1. Open the command palette and select `Teams: Provision`. You will be asked to select Azure resource group to provision the sample.
 1. Once provision is completed, open the command palette and select `Teams: Deploy`.
 
-### Preview the app in Teams
+### Launch the app in Teams
 1. Once deployment is completed, you can preview the APP running in Azure. In Visual Studio Code, open `Run and Debug` and select `Launch Remote (Edge)` or `Launch Remote (Chrome)` in the dropdown list and Press `F5` or green arrow button to open a browser.
 
 #### Usage of this sample

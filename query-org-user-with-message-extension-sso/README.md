@@ -1,7 +1,21 @@
+---
+page_type: sample
+languages:
+- typescript
+products:
+- office-teams
+- office
+name: Org User Search Connector
+urlFragment: officedev-teamsfx-samples-me-query-org-user-with-message-extension-sso
+description: Query Org User with Message Extension SSO.
+extensions:
+  createdDate: "2022-09-20"
+---
 # Getting Start with Query Org User with Message Extension SSO
 This is a simple search-based message extension app demonstrating how to integrate with Bot Framework SDK, TeamsFx SDK and Microsoft Graph API to implement a feature that queries organization's user with single sign on (SSO) capability.
 
 ![TotalShow](./images/total.gif)
+![LinkUnfurling](./images/link-unfurling.gif)
 
 ## This sample illustrates
 - How to login and consent in Message Extension
@@ -10,7 +24,7 @@ This is a simple search-based message extension app demonstrating how to integra
 ## Prerequisite to use this sample
 - [Node.js](https://nodejs.org/), supported versions: 16, 18
 - A Microsoft 365 account. If you do not have Microsoft 365 account, apply one from [Microsoft 365 developer program](https://developer.microsoft.com/en-us/microsoft-365/dev-program)
-- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [TeamsFx CLI](https://aka.ms/teamsfx-cli)
+- [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [Teams Toolkit CLI](https://aka.ms/teams-toolkit-cli)
 
 ## Minimal path to awesome
 > Here are the instructions to run the sample in **Visual Studio Code**.
@@ -42,6 +56,15 @@ After you have completed the provision and deploy steps in `Deploy the app to Az
 - Update the scopes in `aad.manifest.json` which used by your Graph Client.
 
 ![UpdateScopes](./images/graph-scope-update.png)
+
+### Custom the link unfurling SSO Logic
+- Follow the code in `teamsBot.ts`, custom your query logic in `handleMessageExtensionLinkQueryWithSSO`.
+
+![CustomLogicLink](./images/custom-link-unfurling.png)
+
+- Update the `domains` in `appPackage/manifest.json` which triggers the preview card.
+
+![UpdateDomain](./images/custom-domain-link.png)
 
 - If you want to see the updated results, please re-run local debug, or re-provision to update the AAD app and re-deploy the changed part.
 
